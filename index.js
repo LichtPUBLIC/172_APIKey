@@ -18,15 +18,15 @@ const pool = mysql.createPool({
 });
 
 // Middleware
-app.use(express.json()) // <-- BARU
+app.use(express.json()) // <-- Ini penting agar POST /validate bisa membaca JSON
 app.use(express.static(path.join(__dirname, 'public')))
 
-// Endpoint GET '/'
+// Endpoint GET '/' (Abaikan jika hanya tes di Postman)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
 
-// Endpoint POST '/create'
+// Endpoint POST '/create' (Untuk membuat key yang akan dites)
 app.post('/create', async (req, res) => {
     try {
         const randomBytes = crypto.randomBytes(16).toString('hex').toUpperCase()
@@ -42,7 +42,9 @@ app.post('/create', async (req, res) => {
     }
 })
 
-// Endpoint POST '/validate' (BARU)
+// --- INI ADALAH ENDPOINT UNTUK POSTMAN/THUNDER ---
+
+// ✅ Endpoint POST '/validate' untuk mengecek API key
 app.post('/validate', async (req, res) => {
     
     // 1. Ambil API key dari body JSON
