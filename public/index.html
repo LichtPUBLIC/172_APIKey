@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Generator | Great Sage</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rimuru-bg: #e0f7fa;
+            --rimuru-bg-gradient: #ffffff;
+            --rimuru-primary: #00b0ff;
+            --rimuru-secondary: #0077c2;
+            --rimuru-text: #263238;
+            --rimuru-shadow: rgba(0, 176, 255, 0.4);
+            --rimuru-success: #00c853;
+            --rimuru-error: #d50000;
+        }
+
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, var(--rimuru-bg) 0%, var(--rimuru-bg-gradient) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: var(--rimuru-text);
+        }
+
+        img.slime-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 5px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        h1 {
+            color: var(--rimuru-primary);
+            font-weight: 700;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        button {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: var(--rimuru-primary);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border-radius: 12px; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--rimuru-shadow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 4px solid var(--rimuru-secondary);
+        }
+
+        button:hover {
+            background-color: #40c4ff;
+            box-shadow: 0 6px 20px var(--rimuru-shadow);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        textarea {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            width: 450px; /* Sedikit lebih lebar untuk API key */
+            height: 120px; /* Lebih pendek karena hanya menampilkan key */
+            margin-top: 25px;
+            padding: 15px;
+            border: 3px solid var(--rimuru-primary);
+            border-radius: 12px; 
+            font-size: 1.1em; /* Font lebih besar */
+            color: var(--rimuru-text);
+            resize: none;
+            background-color: #ffffff;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+            line-height: 1.5;
+            text-align: center; /* Key di tengah */
+        }
+
+        textarea::placeholder {
+            color: #b0bec5;
+        }
+
+        .status-loading { color: var(--rimuru-primary); }
+        .status-success { color: var(--rimuru-secondary); }
+        .status-error { color: var(--rimuru-error); }
+    </style>
+</head>
+<body>
+
+    <img class="slime-icon" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300b0ff'%3E%3Cpath d='M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.49 3.32 8.26 7.61 9.47.2.04.42.07.64.07.59 0 1.07-.48 1.07-1.07v-1.93c0-.12-.02-.24-.05-.36-1.12-.5-1.92-1.63-1.92-2.98 0-1.85 1.5-3.35 3.35-3.35s3.35 1.5 3.35 3.35c0 1.35-.8 2.48-1.92 2.98-.03.12-.05.24-.05.36v1.93c0 .59.48 1.07 1.07 1.07.22 0 .44-.03.64-.07C18.68 20.26 22 16.49 22 12z'/%3E%3C/svg%3E" alt="Ikon Slime" />
+    
+    <h1>API Generator</h1>
+    <button id="generateBtn">Buat API</button>
+    <textarea id="result" placeholder="API Key akan muncul di sini..."></textarea>
+
+    <script>
+        document.getElementById("generateBtn").addEventListener("click", async () => {
+            const resultBox = document.getElementById("result");
+            
+            resultBox.classList.remove('status-success', 'status-error');
+            resultBox.classList.add('status-loading');
+            resultBox.value = "⏳ [Great Sage] Menganalisis permintaan...";
+
+            try {
+                // Panggil endpoint /create dengan method POST
+                const res = await fetch("/create", {
+                    method: "POST" 
+                });
+                
+                if (!res.ok) {
+                    throw new Error(`Gagal (status: ${res.status})... Koneksi gagal.`);
+                }
+                
+                // Ambil data JSON yang dikirim server
+                const data = await res.json();
+                
+                resultBox.classList.remove('status-loading');
+                resultBox.classList.add('status-success');
+                // Tampilkan apiKey dari data
+                resultBox.value = data.apiKey;
+
+            } catch (err) {
+                resultBox.classList.remove('status-loading');
+                resultBox.classList.add('status-error');
+                resultBox.value = `❌ [Peringatan] Gagal membuat API.\n${err.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
